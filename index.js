@@ -1,38 +1,40 @@
+import dotenv from 'dotenv';
+import express from 'express';
+import cors from 'cors';
+import morgan from 'morgan';
+import connectDB from './config/db.js';
+import { notFound, errorHandler } from './middleware/errorMiddleware.js';
 
-import express from "express";
-import mongoose from "mongoose";
-import cors from "cors";
-import dotenv from "dotenv";
+// Load environment variables
+dotenv.config();
 
-
-
-dotenv.config();                              // Load .env first
-const { MONGO_URI, PORT = 5000 } = process.env;
-
-if (!MONGO_URI) {
-  console.error("❌  MONGO_URI missing in .env");
-  process.exit(1);
-}
+// Connect to MongoDB
+connectDB();
 
 const app = express();
 
-// ─── Global middleware ─────────────────────────────────────────
+// Middleware
 app.use(cors());
 app.use(express.json());
 
-// ─── Routes ───────────────────────────────────────────────────
-app.get("/", (_req, res) => res.send("API running 🚀"));
-
-
-// ─── DB + server bootstrap ────────────────────────────────────
-try {
-  await mongoose.connect(MONGO_URI);
-  console.log("✅  MongoDB connected");
-
-  app.listen(PORT, () =>
-    console.log(`✅  Server listening at http://localhost:${PORT}`)
-  );
-} catch (err) {
-  console.error("❌  Failed to start server:", err);
-  process.exit(1);
+// Logging middleware (only in development)
+if (process.env.NODE_ENV !== 'production') {
+  app.use(morgan('dev'));
 }
+
+// Root route - useful for health checks or confirming deployment
+app.get('/', (req, res) => {
+  res.send('Investment Backend is running!');
+});
+
+// Mount API routes here (e.g. app.use('/api/users', userRoutes);)
+
+// Error handlers
+app.use(notFound);
+app.use(errorHandler);
+
+// Start server
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
+});
