@@ -8,4 +8,4 @@ const investmentAccountSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 const InvestmentAccount = mongoose.model('InvestmentAccount', investmentAccountSchema);
-export default InvestmentAccount;
+export default InvestmentAccount;  
