@@ -16,7 +16,7 @@ const accountImages = {
 // -----------------------------------------------------------------------------
 export const registerUser = async (req, res, next) => {
   try {
-    const { name, phone, email, password } = req.body;
+    const { name, phone, email, password, role } = req.body;
     if (!name || !phone || !email || !password) {
       return res.status(400).json({ message: 'All fields are required.' });
     }
@@ -25,31 +25,20 @@ export const registerUser = async (req, res, next) => {
     if (userExists)
       return res.status(400).json({ message: 'User already exists.' });
 
+    // Only allow admin role if explicitly set and you want to allow it
+    const userRole = role === 'admin' ? 'admin' : 'user';
+
     // 1) create user
     const user = await User.create({
       name,
       phone,
       email,
       password,
-      profileImage: `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(
-        name
-      )}`,
+      profileImage: `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(name)}`,
+      role: userRole
     });
 
-    // 2) bootstrap 3 investment accounts for that user
-    const accountTypes = ['Savings', 'Retirement', 'Stocks'];
-    const accounts = await Promise.all(
-      accountTypes.map((type) =>
-        InvestmentAccount.create({
-          user: user._id,
-          type,
-          profileImage: accountImages[type],
-        })
-      )
-    );
-
-    user.accounts = accounts.map((acc) => acc._id);
-    await user.save();
+    // ...existing account creation code...
 
     res.status(201).json({
       token: generateToken(user._id), // <‑‑ JWT
@@ -58,6 +47,7 @@ export const registerUser = async (req, res, next) => {
       email: user.email,
       phone: user.phone,
       profileImage: user.profileImage,
+      role: user.role, // <-- Include role in response
       accounts,
     });
   } catch (err) {
@@ -68,6 +58,7 @@ export const registerUser = async (req, res, next) => {
 // -----------------------------------------------------------------------------
 // LOGIN
 // -----------------------------------------------------------------------------
+// Return role in login response
 export const loginUser = async (req, res, next) => {
   try {
     const { email, password } = req.body;
@@ -84,6 +75,7 @@ export const loginUser = async (req, res, next) => {
       email: user.email,
       phone: user.phone,
       profileImage: user.profileImage,
+      role: user.role, // <-- Include role in response
       accounts: user.accounts,
     });
   } catch (err) {
@@ -175,3 +167,6 @@ export const changePassword = async (req, res, next) => {
     next(err);
   }
 };
+
+
+ 

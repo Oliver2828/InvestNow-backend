@@ -7,7 +7,10 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   profileImage: { type: String, default: '' },
-  accounts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'InvestmentAccount' }]
+  accounts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'InvestmentAccount' }],
+  role: { type: String, enum: ['user', 'admin'], default: 'user' }, // <-- Add role
+  status: { type: String, enum: ['active', 'suspended'], default: 'active' }, // <-- Add status
+  simulationActive: { type: Boolean, default: false } // <-- Add simulation flag for user
 }, { timestamps: true });
 
 // Hash password before saving
