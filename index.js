@@ -7,6 +7,7 @@ import { notFound, errorHandler } from './middleware/errormiddleware.js';
 import userRoutes from './routes/userRoutes.js';
 import accountRoutes from './routes/accountRoutes.js'; // 
 import adminRoutes from './routes/adminRoutes.js';
+import dashboardRoutes from './routes/dashboardRoutes.js';
 
 dotenv.config();
 connectDB();
@@ -26,6 +27,7 @@ app.get('/', (req, res) => {
 
 app.use('/api/users', userRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
