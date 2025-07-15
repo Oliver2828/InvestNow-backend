@@ -1,4 +1,4 @@
-import User from '../models/User.js';
+import User from '../models/userModel.js';
 import InvestmentAccount from '../models/InvestmentAccount.js';
 import { generateToken } from '../utils/generateToken.js';
 
@@ -167,6 +167,23 @@ export const changePassword = async (req, res, next) => {
     next(err);
   }
 };
+
+// -----------------------------------------------------------------------------
+// GET ALL USERS — For Admin or Dashboard View
+// -----------------------------------------------------------------------------
+export const getAllUsers = async (req, res, next) => {
+  try {
+    const users = await User.find()
+      .select('-password')
+      .populate('accounts');
+
+    res.json(users); // ✅ Make sure this line returns users directly
+  } catch (err) {
+    console.error('Error fetching users:', err);
+    res.status(500).json({ message: 'Failed to fetch users' });
+  }
+};
+
 
 
  

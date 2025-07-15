@@ -5,6 +5,7 @@ import {
   getCurrentUser,
   updateProfile,
   changePassword,
+  getAllUsers,
 } from '../controllers/userController.js';
 
 import { protect } from '../middleware/authMiddleware.js';
@@ -15,6 +16,7 @@ const router = express.Router();
 router.post('/register', registerUser);
 router.post('/login', loginUser);
 router.get('/me', getCurrentUser); // demo / unauthenticated
+router.get('/', protect, getAllUsers);
 
 // PROTECTED
 router.put('/me', protect, updateProfile);        // update any field except email

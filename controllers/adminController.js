@@ -1,5 +1,5 @@
 import InvestmentAccount from '../models/InvestmentAccount.js';
-import User from '../models/User.js';
+import User from '../models/userModel.js';
 
 // Search accounts by name or email
 export const searchAccounts = async (req, res, next) => {

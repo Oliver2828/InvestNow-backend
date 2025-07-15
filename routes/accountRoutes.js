@@ -1,6 +1,7 @@
 import express from 'express';
-import InvestmentAccount from '../models/investmentAccountModel.js';
-import User from '../models/userModel.js';
+import InvestmentAccount from '../models/investmentAccount.js';
+import User from '../models/userModel.js'; // ✅ Fix path and casing
+
 
 const router = express.Router();
 

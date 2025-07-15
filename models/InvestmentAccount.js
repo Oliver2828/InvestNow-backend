@@ -7,5 +7,5 @@ const investmentAccountSchema = new mongoose.Schema({
   profileImage: { type: String, default: '' }
 }, { timestamps: true });
 
-const InvestmentAccount = mongoose.model('InvestmentAccount', investmentAccountSchema);
-export default InvestmentAccount;  
+// ✅ Prevent model overwrite
+export default mongoose.models.InvestmentAccount || mongoose.model('InvestmentAccount', investmentAccountSchema);
